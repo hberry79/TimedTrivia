@@ -12,13 +12,14 @@ $(document).ready(function() {
     var timeRemaining = 0;
     var timer;
 
-    //hides the game until we click the start button
+    //main functions
     $("#maingame, #endScreen").hide();
     $('#A, #B, #C').click(answerCheck);
     $("#StartButton").click(init);
+    $("#ReStartButton").click(initAgain);
 
     
-    //store your game in an object. Here are all my questions and info needed.
+    //store your game in an array/object. Here are all my questions and info needed.
     var questions = [{
             //index 0 
             question: "What is the name of this meme?",
@@ -61,6 +62,7 @@ $(document).ready(function() {
     			//game over
     			$("#maingame").hide();
 	        	$("#endScreen").show();
+                clearTimeout(timer);
 		    }
 		    else {
 	        startTimer();
@@ -77,8 +79,9 @@ $(document).ready(function() {
             if (timeRemaining <= 0) {
                 //unanswered
 				noAnswer++;
+                nextIndex++;
                 $(".noguess").html(noAnswer);
-                return;
+                loadNextQuestion();
             } else {
                 timeRemaining = timeRemaining - 1;
                 incrementTimer();
@@ -97,6 +100,7 @@ $(document).ready(function() {
         var userGuess = $(this).html();
       
         if (userGuess === questions[nextIndex].answer) {
+            //guessed right
             correctAnswer++;
             nextIndex++;
             console.log(nextIndex)
@@ -104,6 +108,7 @@ $(document).ready(function() {
             loadNextQuestion();
 	        }
          else {
+            //guessed wrong
             wrongAnswer++;
             nextIndex++;
             $('.losses').html(wrongAnswer);
@@ -116,8 +121,28 @@ $(document).ready(function() {
         $("#startScreen").hide();
         $("#maingame").show();
         startTimer();
-        $("#photo").html("<img src ='" + questions[0].image + "'>")
-        $("#question").append(questions[0].question)
-        $("#answers").append(questions[0].choices)
+        $("#photo").html("<img src ='" + questions[0].image + "'>");
+        $("#question").append(questions[0].question);
+        $("#answers").append(questions[0].choices);
     }
+
+    //re-starting game
+    function initAgain() {
+        $("#endScreen").hide();
+        correctAnswer = 0;
+        wrongAnswer = 0;
+        noAnswer = 0;
+        nextIndex= 0;
+        timeRemaining = 0;
+        $('.wins').html(correctAnswer);
+        $('.losses').html(wrongAnswer);
+        $(".noguess").html(noAnswer);
+        startTimer();
+        $("#photo").html("<img src ='" + questions[0].image + "'>");
+        $("#question").append(questions[0].question);
+        $("#answers").append(questions[0].choices);
+        $("#maingame").show();
+
+    }
+     
 });
